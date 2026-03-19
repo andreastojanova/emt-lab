@@ -6,11 +6,11 @@ import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-@Entity
-@Table(name="books")
+
 @Getter
 @Setter
-
+@Entity
+@Table(name="books")
 public class Book extends BaseEntity {
 
 

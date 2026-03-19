@@ -7,10 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name="countries")
-
 @Getter
 @Setter
+@Table(name="countries")
 public class Country extends BaseEntity {
 
 
@@ -23,4 +22,12 @@ public class Country extends BaseEntity {
         this.continent = continent;
     }
     public Country(){}
+
+    public String getName() {
+        return name;
+    }
+
+    public String getContinent() {
+        return continent;
+    }
 }

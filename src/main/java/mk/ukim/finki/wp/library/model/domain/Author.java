@@ -9,7 +9,6 @@ import lombok.Setter;
 
 @Entity
 @Table(name="authors")
-@NoArgsConstructor
 @Getter
 @Setter
 public class Author extends BaseEntity {
@@ -28,6 +27,15 @@ public class Author extends BaseEntity {
     }
     public Author(){}
 
+    public String getName() {
+        return name;
+    }
 
+    public String getSurname() {
+        return surname;
+    }
 
+    public Country getCountry() {
+        return country;
+    }
 }
