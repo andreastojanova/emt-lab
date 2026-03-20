@@ -1,7 +1,9 @@
 package mk.ukim.finki.wp.library.service;
 
 import mk.ukim.finki.wp.library.model.domain.Book;
+import mk.ukim.finki.wp.library.model.domain.BookCopy;
 import mk.ukim.finki.wp.library.model.domain.Category;
+import mk.ukim.finki.wp.library.model.domain.State;
 import mk.ukim.finki.wp.library.model.dto.BookDto;
 import mk.ukim.finki.wp.library.model.projection.BookProjection;
 
@@ -17,5 +19,7 @@ public interface BookService {
     void deleteById(Long id);
     Book markAsRented(Long id);
     List<BookProjection> listByCategory(Category category);
+
+    BookCopy addCopy(Long bookId, String barcode, State state);
 
 }

@@ -6,6 +6,8 @@ import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -22,15 +24,18 @@ public class Book extends BaseEntity {
     private Author author;
     @Enumerated(EnumType.STRING)
     private State state;
-    private Integer availableCopies;
 
-    public Book(String name, Category category, Author author, Integer availableCopies) {
+    @OneToMany(mappedBy ="book")
+    private List<BookCopy> copies;
+
+    public Book(String name, Category category, Author author) {
         this.name = name;
         this.category = category;
         this.author = author;
-        this.availableCopies = availableCopies;
+
 
     }
+
     public Book(){}
 
     public String getName() {
@@ -49,9 +54,6 @@ public class Book extends BaseEntity {
         return state;
     }
 
-    public Integer getAvailableCopies() {
-        return availableCopies;
-    }
 
     public void setName(String name) {
         this.name = name;
@@ -69,7 +71,7 @@ public class Book extends BaseEntity {
         this.state = state;
     }
 
-    public void setAvailableCopies(Integer availableCopies) {
-        this.availableCopies = availableCopies;
+    public List<BookCopy> getCopies() {
+        return copies;
     }
 }

@@ -1,11 +1,10 @@
 package mk.ukim.finki.wp.library.service.impl;
 
-import mk.ukim.finki.wp.library.model.domain.Category;
+import mk.ukim.finki.wp.library.model.domain.*;
 import mk.ukim.finki.wp.library.model.exception.InvalidBookIdException;
-import mk.ukim.finki.wp.library.model.domain.Author;
-import mk.ukim.finki.wp.library.model.domain.Book;
 import mk.ukim.finki.wp.library.model.dto.BookDto;
 import mk.ukim.finki.wp.library.model.projection.BookProjection;
+import mk.ukim.finki.wp.library.repository.BookCopyRepository;
 import mk.ukim.finki.wp.library.repository.BookRepository;
 import mk.ukim.finki.wp.library.service.AuthorService;
 import mk.ukim.finki.wp.library.service.BookService;
@@ -18,10 +17,12 @@ public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
     private final AuthorService authorService;
+    private final BookCopyRepository bookCopyRepository;
 
-    public BookServiceImpl(BookRepository bookRepository,AuthorService authorService) {
+    public BookServiceImpl(BookRepository bookRepository, AuthorService authorService, BookCopyRepository bookCopyRepository) {
         this.bookRepository = bookRepository;
         this.authorService=authorService;
+        this.bookCopyRepository = bookCopyRepository;
     }
 
 
@@ -55,7 +56,6 @@ public class BookServiceImpl implements BookService {
         book.setName(bookDto.name());
         book.setAuthor(author);
         book.setCategory(bookDto.category());
-        book.setAvailableCopies(bookDto.availableCopies());
 
         return bookRepository.save(book);
 
@@ -72,14 +72,24 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public BookCopy addCopy(Long bookId, String barcode, State state) {
+        Book book=findById(bookId);
+        BookCopy newCopy=new BookCopy(barcode,state,true);
+
+        newCopy.setBook(book);
+        return bookCopyRepository.save(newCopy);
+    }
+
+    @Override
     public Book markAsRented(Long id) {
         Book book=findById(id);
 
-        if (book.getAvailableCopies()>0){
-            book.setAvailableCopies(book.getAvailableCopies()-1);
-            return bookRepository.save(book);
-        }else {
-            throw new RuntimeException("No more copies available.");
-        }
+        BookCopy availableCopy=book.getCopies().stream()
+                .filter(BookCopy::isAvailable)
+                .findFirst().orElseThrow(
+                        ()->new RuntimeException("No more copies available."));
+
+        availableCopy.setAvailable(false);
+        return bookRepository.save(book);
     }
 }
