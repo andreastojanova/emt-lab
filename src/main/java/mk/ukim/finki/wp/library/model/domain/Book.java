@@ -13,6 +13,22 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name="books")
+@NamedEntityGraph(
+        name = "book-entity-graph",
+        attributeNodes = {
+                @NamedAttributeNode(value="author"),
+                @NamedAttributeNode(value = "author",subgraph = "author-subgraph"),
+                @NamedAttributeNode(value="copies")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name="author-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("country")
+                        }
+                )
+        }
+)
 public class Book extends BaseEntity {
 
 

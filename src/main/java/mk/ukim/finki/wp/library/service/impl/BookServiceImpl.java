@@ -1,13 +1,22 @@
 package mk.ukim.finki.wp.library.service.impl;
 
+import jakarta.transaction.Transactional;
+import mk.ukim.finki.wp.library.events.BookRentEvent;
 import mk.ukim.finki.wp.library.model.domain.*;
+import mk.ukim.finki.wp.library.model.dto.BookResponseDto;
 import mk.ukim.finki.wp.library.model.exception.InvalidBookIdException;
 import mk.ukim.finki.wp.library.model.dto.BookDto;
 import mk.ukim.finki.wp.library.model.projection.BookProjection;
+import mk.ukim.finki.wp.library.model.projection.ExtendedBookProjection;
 import mk.ukim.finki.wp.library.repository.BookCopyRepository;
 import mk.ukim.finki.wp.library.repository.BookRepository;
 import mk.ukim.finki.wp.library.service.AuthorService;
 import mk.ukim.finki.wp.library.service.BookService;
+import mk.ukim.finki.wp.library.specification.BookSpecification;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,11 +27,13 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final AuthorService authorService;
     private final BookCopyRepository bookCopyRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public BookServiceImpl(BookRepository bookRepository, AuthorService authorService, BookCopyRepository bookCopyRepository) {
+    public BookServiceImpl(BookRepository bookRepository, AuthorService authorService, BookCopyRepository bookCopyRepository, ApplicationEventPublisher eventPublisher) {
         this.bookRepository = bookRepository;
         this.authorService=authorService;
         this.bookCopyRepository = bookCopyRepository;
+        this.eventPublisher = eventPublisher;
     }
 
 
@@ -32,7 +43,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookProjection> findAllProjected() {
+    public List<ExtendedBookProjection> findAllProjected() {
         return bookRepository.findAllProjectedBy();
     }
 
@@ -67,7 +78,7 @@ public class BookServiceImpl implements BookService {
 
     }
     @Override
-    public List<BookProjection> listByCategory(Category category) {
+    public List<ExtendedBookProjection> listByCategory(Category category) {
         return this.bookRepository.findAllByCategory(category);
     }
 
@@ -81,6 +92,20 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public Page<BookResponseDto> findAllWithPaginationAndFiltering(Category category, State state, Long authorId, Boolean available, Pageable pageable) {
+        Specification<Book> filter=Specification
+                .where(BookSpecification.hasCategory(category))
+                .and(BookSpecification.hasState(state))
+                .and(BookSpecification.hasAuthor(authorId))
+                .and(BookSpecification.hasAvailableCopies(available));
+
+        Page<Book> bookPage = this.bookRepository.findAll(filter, pageable);
+
+        return bookPage.map(BookResponseDto::from);
+    }
+
+    @Override
+    @Transactional
     public Book markAsRented(Long id) {
         Book book=findById(id);
 
@@ -90,6 +115,7 @@ public class BookServiceImpl implements BookService {
                         ()->new RuntimeException("No more copies available."));
 
         availableCopy.setAvailable(false);
+        this.eventPublisher.publishEvent(new BookRentEvent(book, "student@finki.ukim.mk"));
         return bookRepository.save(book);
     }
 }
