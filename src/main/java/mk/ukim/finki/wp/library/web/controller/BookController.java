@@ -102,4 +102,9 @@ public class BookController {
     public List<CategoryStatsView> getStatistics() {
         return categoryStatsViewRepository.findAll();
     }
+
+    @GetMapping("/latest")
+    public List<Book> getLatestTen() {
+        return bookService.findLatestTen();
+    }
 }

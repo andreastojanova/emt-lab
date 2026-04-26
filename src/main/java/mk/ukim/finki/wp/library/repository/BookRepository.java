@@ -19,4 +19,6 @@ public interface BookRepository extends JpaRepository<Book,Long>, JpaSpecificati
     @EntityGraph(value = "book-entity-graph",type = EntityGraph.EntityGraphType.FETCH)
 
     List<ExtendedBookProjection> findAllByCategory(Category category);
+
+    List<Book> findTop10ByOrderByDatePublishedDesc();
 }

@@ -5,10 +5,13 @@ import mk.ukim.finki.wp.library.model.domain.Book;
 import mk.ukim.finki.wp.library.model.domain.BookCopy;
 import mk.ukim.finki.wp.library.model.domain.Category;
 
+import java.time.LocalDate;
+
 public record BookDto(String name,
                       Category category,
-                      Long authorId) {
+                      Long authorId,
+                      LocalDate datePublished) {
     public Book toBook(Author author){
-        return new Book(this.name,this.category,author);
+        return new Book(this.name,this.category,author,this.datePublished);
     }
 }

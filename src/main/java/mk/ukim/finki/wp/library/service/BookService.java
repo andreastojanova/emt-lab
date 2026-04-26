@@ -31,4 +31,6 @@ public interface BookService {
                                                             Boolean available,
                                                             Pageable pageable);
 
+
+    List<Book> findLatestTen();
 }

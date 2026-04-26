@@ -1,11 +1,14 @@
 package mk.ukim.finki.wp.library.model.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -40,14 +43,17 @@ public class Book extends BaseEntity {
     private Author author;
     @Enumerated(EnumType.STRING)
     private State state;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate datePublished;
 
     @OneToMany(mappedBy ="book")
     private List<BookCopy> copies;
 
-    public Book(String name, Category category, Author author) {
+    public Book(String name, Category category, Author author, LocalDate datePublished) {
         this.name = name;
         this.category = category;
         this.author = author;
+        this.datePublished=datePublished;
 
 
     }

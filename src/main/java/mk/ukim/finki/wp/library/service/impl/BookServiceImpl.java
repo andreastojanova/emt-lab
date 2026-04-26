@@ -105,6 +105,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public List<Book> findLatestTen() {
+        return bookRepository.findTop10ByOrderByDatePublishedDesc();
+    }
+
+    @Override
     @Transactional
     public Book markAsRented(Long id) {
         Book book=findById(id);
