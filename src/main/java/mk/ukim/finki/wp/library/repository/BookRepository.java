@@ -2,6 +2,7 @@ package mk.ukim.finki.wp.library.repository;
 
 import mk.ukim.finki.wp.library.model.domain.Book;
 import mk.ukim.finki.wp.library.model.domain.Category;
+import mk.ukim.finki.wp.library.model.domain.State;
 import mk.ukim.finki.wp.library.model.projection.BookProjection;
 import mk.ukim.finki.wp.library.model.projection.ExtendedBookProjection;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -21,4 +22,6 @@ public interface BookRepository extends JpaRepository<Book,Long>, JpaSpecificati
     List<ExtendedBookProjection> findAllByCategory(Category category);
 
     List<Book> findTop10ByOrderByDatePublishedDesc();
+
+    List<Book> findAllByState(State state);
 }

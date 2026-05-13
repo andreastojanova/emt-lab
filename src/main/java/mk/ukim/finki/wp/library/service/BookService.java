@@ -33,4 +33,7 @@ public interface BookService {
 
 
     List<Book> findLatestTen();
+
+
+    List<Book> filterByState(State state);
 }

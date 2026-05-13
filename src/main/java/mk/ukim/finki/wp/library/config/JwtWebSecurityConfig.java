@@ -34,7 +34,7 @@ public class JwtWebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000","http://localhost:5173"));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         corsConfiguration.setAllowedHeaders(List.of("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -67,7 +67,6 @@ public class JwtWebSecurityConfig {
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // 1. ЈАВНИ ПАТЕКИ (Дозволено за сите без токен)
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
@@ -76,18 +75,23 @@ public class JwtWebSecurityConfig {
                                 "/api/authors/**",
                                 "/api/countries/**",
                                 "/api/books",
-                                "/api/books/**"
-                        ).permitAll()
-
-                        // 2. АДМИНИСТРАТОРСКИ ПАТЕКИ (Мора да е најавен како ADMIN)
-                        .requestMatchers(
+                                "/api/books/state/**",
+                                "/api/books/**",
                                 "/api/books/add",
                                 "/api/books/edit/**",
-                                "/api/books/delete/**",
+                                "/api/books/delete/**"
+
+
+                        ).permitAll()
+
+
+                        .requestMatchers(
+//                                "/api/books/add",
+//                                "/api/books/edit/**",
+//                                "/api/books/delete/**",
                                 "/api/books/statistics"
                         ).hasRole("ADMINISTRATOR")
 
-                        // 3. СЀ ОСТАНАТО (пр. изнајмување книга или профил)
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagementConfigurer ->

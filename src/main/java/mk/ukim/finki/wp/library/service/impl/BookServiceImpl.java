@@ -110,6 +110,12 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public List<Book> filterByState(State state) {
+        return bookRepository.findAllByState(state);
+    }
+
+
+    @Override
     @Transactional
     public Book markAsRented(Long id) {
         Book book=findById(id);
