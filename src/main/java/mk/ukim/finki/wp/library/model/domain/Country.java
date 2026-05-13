@@ -30,4 +30,12 @@ public class Country extends BaseEntity {
     public String getContinent() {
         return continent;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setContinent(String continent) {
+        this.continent = continent;
+    }
 }

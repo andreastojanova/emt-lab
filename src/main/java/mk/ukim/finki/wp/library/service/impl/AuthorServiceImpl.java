@@ -1,7 +1,9 @@
 package mk.ukim.finki.wp.library.service.impl;
 
+import jakarta.transaction.Transactional;
 import mk.ukim.finki.wp.library.model.domain.Author;
 import mk.ukim.finki.wp.library.model.domain.Country;
+import mk.ukim.finki.wp.library.model.dto.AuthorDto;
 import mk.ukim.finki.wp.library.model.exception.InvalidAuthorIdException;
 import mk.ukim.finki.wp.library.repository.AuthorRepository;
 import mk.ukim.finki.wp.library.service.AuthorService;
@@ -33,14 +35,25 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public Author save(String name, String surname, Long countryId) {
-        Country country=countryService.findById(countryId);
-        Author author=new Author(name,surname,country);
+    public Author save(AuthorDto authorDto) {
+        Country country=countryService.findById(authorDto.countryId());
+        Author author=authorDto.toAuthor(country);
         return authorRepository.save(author);
     }
 
     @Override
     public void deleteById(Long id) {
         authorRepository.deleteById(id);
+    }
+
+    @Transactional
+    @Override
+    public Author edit(Long id, AuthorDto authorDto) {
+       Country country=countryService.findById(authorDto.countryId());
+       Author author=findById(id);
+       author.setName(authorDto.name());
+       author.setSurname(authorDto.surname());
+       author.setCountry(country);
+       return authorRepository.save(author);
     }
 }

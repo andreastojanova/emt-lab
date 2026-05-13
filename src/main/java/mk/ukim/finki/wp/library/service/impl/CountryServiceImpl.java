@@ -1,10 +1,12 @@
 package mk.ukim.finki.wp.library.service.impl;
 
+import jakarta.transaction.Transactional;
 import mk.ukim.finki.wp.library.model.domain.Country;
 import mk.ukim.finki.wp.library.model.exception.InvalidCountryIdException;
 import mk.ukim.finki.wp.library.repository.CountryRepository;
 import mk.ukim.finki.wp.library.service.CountryService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -29,7 +31,7 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public Country save(String name, String continent) {
+    public Country save( String name,  String continent) {
         Country country=new Country(name,continent);
         return countryRepository.save(country);
     }
@@ -37,5 +39,14 @@ public class CountryServiceImpl implements CountryService {
     @Override
     public void deleteById(Long id) {
         countryRepository.deleteById(id);
+    }
+
+    @Transactional
+    @Override
+    public Country edit(Long id, String name, String continent) {
+        Country country=findById(id);
+        country.setName(name);
+        country.setContinent(continent);
+        return countryRepository.save(country);
     }
 }

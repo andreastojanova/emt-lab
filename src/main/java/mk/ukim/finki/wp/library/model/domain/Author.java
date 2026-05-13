@@ -38,4 +38,16 @@ public class Author extends BaseEntity {
     public Country getCountry() {
         return country;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
+    }
 }

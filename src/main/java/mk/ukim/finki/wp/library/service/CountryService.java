@@ -9,4 +9,5 @@ public interface CountryService {
     Country findById(Long id);
     Country save(String name, String continent);
     void deleteById(Long id);
+    Country edit(Long id,String name,String continent);
 }
